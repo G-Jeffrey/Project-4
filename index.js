@@ -24,16 +24,17 @@ app.get('/classInfo', async (req, res) => {
     res.send(JSON.stringify(info));
 });
 app.post('/classInfo', async (req, res) => {
+    let result = {};
     try{
         const reqJson = req.body;
-        await createClass(reqJson.classInfo);
-        res.sucess = true;
+        await createInfo(reqJson.classInfo);
+        result.sucess = true;
     }catch(e){
-        res.sucess = false;
+        result.sucess = false;
         console.log(`Error ${e}`);
     }finally{
         res.setHeader('content-type','application/json');
-        res.send(JSON.stringify(res));
+        res.send(JSON.stringify(result));
     }
 });
 
@@ -59,9 +60,11 @@ async function readInfo(){
 }
 async function createInfo(info){
     try{
-        await client.query("INSERT INTO classlist(course_name,professor,days,time,duration,student_cap,isGrad) VALUES($1,$2,$3,$4,$5,$6,$7)",[info[0],info[1],info[5],info[2],info[3],info[4],info[6]]);
+        console.log(info);
+        await pool.query(`INSERT INTO classlist(course_name,professor,days,time,duration,student_cap,isGrad) VALUES($1,$2,$3,$4,$5,$6,$7)`,[info[0],info[1],info[5],info[2],info[3],info[4],info[6]]);
         return true;
     }catch (e){
+        console.log(e);
         return false;
     }
 }
