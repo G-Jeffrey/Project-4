@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project 4</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    
+    <style>
+        tr :first-child{
+            text-align:right;
+        }
+        th{
+            background-color: black;
+            color:white;
+        }
+        button{
+            align:right;
+        }
+        input{
+            align:right;
+        }
+        .modal-dialog{
+            width:80%;
+            margin-left:10%;
+        }
+        .input-margin{
+            float: right;
+            width:90%;
+            margin-left:5%;
+            margin-right:5%;
+            margin-bottom: 2vh;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container" method="POST">
+        <h1>Schedule</h1>
+        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Add a class</button>
+        <div class="modal fade" id="myModal" role="dialog">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Class Information</h4>
+              </div>
+              <form class="form-horizontal" id='myForm'>
+              <div class="modal-body">
+                  <div class="form-group">
+                    <div class="input-margin"><label class = "col-sm-3 col-md-3 col-lg-3">Class Name:</label>
+                    <input type="text" class = "col-sm-8 col-md-8 col-lg-8" placeholder="Physics 100" required></div>
+                    <div class="input-margin"><label class = "col-sm-3" >Professor Name:</label>
+                    <input type="text" class = "col-sm-8 col-md-8 col-lg-8" placeholder = "Professor Dumbledore" required></div>
+                    <div class="input-margin"><label class = "col-sm-3">Class Day(s):</label>
+                        <select name="days" id="days" size="3" class = "col-sm-8 col-md-8 col-lg-8" data-toggle="tooltip" data-placement="left" title="Hold Ctrl/Cmd to select multiple values" multiple required>
+                            <option value="Asynchronous">Asynchronous</option>
+                            <option value="Mon">Monday</option>
+                            <option value="Tues">Tuesday</option>
+                            <option value="Wed">Wednesday</option>
+                            <option value="Thrus">Thrusday</option>
+                            <option value="Fri">Friday</option>
+                            <option value="Sat">Saturday</option>
+                            <option value="Sun">Sunday</option>
+                          </select>
+                </div>
+                    <div class="input-margin"><label class = "col-sm-3">Class Time:</label>
+                    <input type="time" class = "col-sm-8 col-md-8 col-lg-8"></div>
+                    <div class="input-margin"><label class = "col-sm-3">Duration: (In Minutes)</label>
+                    <input type="number" class = "col-sm-8 col-md-8 col-lg-8" placeholder="75" required></div>
+                    <div class="input-margin"><label class = "col-sm-3">Student Capacity:</label>
+                    <input type="number" class = "col-sm-8 col-md-8 col-lg-8" placeholder="60" required></div>
+                    <div class="input-margin"><label class = "col-sm-3">Class Level:</label>
+                    <input type="radio" name="status" value="Undergraduate" required><label>&nbsp;Undergraduate</label>
+                    <input type="radio" name="status" value="Graduate"><label>&nbsp;Graduate</label>
+                    <input type="radio" name="status" value="Both"><label>&nbsp;Both</label>
+                </div>
+                </div>
+
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <input type="submit" class="btn btn-primary" value="Submit" id="submit" onclick='add()'>
+              </div>
+            </form>
+            </div>
+          </div>
+        </div>
+    </div></div>
+        <hr>
+        <table class="table table-striped" id="myTable">
+            <tr>
+                <th>#</th>
+                <th>Class Name</th>
+                <th>Professor</th>
+                <th>Class Day(s)</th>
+                <th>Class Time</th>
+                <th>Duration</th>
+                <th>Student Capacity</th>
+                <th>Undergrad or Graduate level</th>
+            </tr>
+        </table>
+        
+        
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        })
+        readInfo();
+        // event.preventDefault();
+        async function readInfo(){
+            try{
+                const res = await fetch('http://localhost:3000/classInfo', {method:'GET'});
+                const classes = await res.json();
+                let table = document.getElementById('myTable');
+                let x = 1;
+                classes.forEach(i=>{
+                    let tr = document.createElement('tr');
+                    tr.id = i.id;
+                    (i.isGrad==false) ? i.isGrad='Undergraduate' : i.isGrad='Graduate';
+                    const classInfo = [i.id, i.course_name, i.professor, i.days, i.time, i.duration, i.student_cap, i.isGrad];
+                    let row = table.insertRow(x);
+                    for(let j = 0; j<classInfo.length;j++){
+                        let cell = row.insertCell(j);
+                        cell.innerHTML = classInfo[j];
+                        if(j==5) cell.innerHTML+=' minutes';
+                        else if(j==6) cell.innerHTML+=' students';
+                    }
+                    while (tr.firstChild) {
+                        attr.appendChild(tr.firstChild);
+                    }
+                    x++;
+                });
+                $(document).ready(function(){
+                    $("#myModal").modal('hide');
+                });
+            }catch (e){
+                console.log(e);
+            }   
+        }
+        async function add(){
+            try{
+                const data = document.getElementsByTagName('input');
+                const days = document.getElementById('days');
+                let class_day = "";
+                let empty = false;
+                let info = [];
+                // 
+                for (let i = 0; i < data.length-4; i++) {
+                    if(data[i].value.trim()==="") empty = true;
+                    info[i] = data[i].value.trim();
+                }
+                if(days[0].selected){
+                    class_day = days[0].value;
+                }else{
+                    for(let i = 1; i < days.length;i++){
+                        if(days[i].selected)    
+                        class_day += days[i].value;
+                    }
+                }
+                info[info.length] = class_day;
+                if(class_day=="") empty = true;
+                for (let i = 0; i < data.length-1; i++) {
+                    if(data[i].checked) info[info.length] = data[i].value;
+                }
+                if(empty || info.length<7) return;
+                else{
+                    const jsonReq = {};
+                    jsonReq.classInfo = 
+                    const res = await fetch('http://localhost:3000/classInfo', {method:'GET'});
+                    const classes = await res.json();
+                    let table = document.getElementById('myTable');
+                    let x = 1;
+                    classes.forEach(i=>{
+
+                });
+                }
+            }catch(e){
+                console.log(`Error adding: ${e}`);
+            }
+            
+        }
+    </script>
+
+</body>
+</html>
