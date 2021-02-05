@@ -37,11 +37,24 @@ app.post('/classInfo', async (req, res) => {
         res.send(JSON.stringify(result));
     }
 });
-
+app.delete("/classInfo", async (req, res) => {
+    let result = {}
+    try{
+        const reqJson = req.body;
+        result.success = await deleteInfo(reqJson.id)
+    }
+    catch(e){
+        result.success=false;
+    }
+    finally{
+        res.setHeader('content-type','application/json');
+        res.send(JSON.stringify(result));
+    }
+   
+})
 start();
 async function start(){
     await connect();
-    
 }
 async function connect(){
     try{
@@ -65,6 +78,16 @@ async function createInfo(info){
         return true;
     }catch (e){
         console.log(e);
+        return false;
+    }
+}
+async function deleteInfo(id){
+    try {
+        await pool.query("DELETE FROM classlist WHERE id = $1", [id]);
+        return true;
+    }
+    catch(e){
+        console.log(`Error ${e}`);
         return false;
     }
 }
