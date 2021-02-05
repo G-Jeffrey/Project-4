@@ -103,7 +103,7 @@
         </table>
         
         
-    <!-- <script>
+    <script>
         $(function () {
             $('[data-toggle="tooltip"]').tooltip();
         })
@@ -111,7 +111,7 @@
         // event.preventDefault();
         async function readInfo(){
             try{
-                const res = await fetch('http://localhost:3000/classInfo', {method:'GET'});
+                const res = await fetch('https://schedule-listings.herokuapp.com/classInfo', {method:'GET'});
                 const classes = await res.json();
                 let table = document.getElementById('myTable');
                 
@@ -127,7 +127,7 @@
                         if(!confirm(`Are you sure you want to delete row ${row.id}.`)) return;
                         const jsonReq = {};
                         jsonReq.id = row.id;
-                        let result = await fetch('http://localhost:3000/classInfo', {method: "DELETE", headers: {"content-type": "application/json"}, body: JSON.stringify(jsonReq) })
+                        let result = await fetch('https://schedule-listings.herokuapp.com/classInfo', {method: "DELETE", headers: {"content-type": "application/json"}, body: JSON.stringify(jsonReq) })
                         result  = await result.json();
                         location.reload();
                     })
@@ -175,7 +175,7 @@
                 else{
                     const jsonReq = {};
                     jsonReq.classInfo = info;
-                    const res = await fetch('http://localhost:3000/classInfo', {method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify(jsonReq)});
+                    const res = await fetch('https://schedule-listings.herokuapp.com/classInfo', {method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify(jsonReq)});
                     const processing = await res.json();
                     location.reload();
                 }
@@ -184,7 +184,7 @@
             }
             
         }
-    </script> -->
+    </script>
 
 </body>
 </html>
