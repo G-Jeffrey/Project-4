@@ -123,9 +123,10 @@
                     row.textContent = i.textContent;
                     row.id = i.id;
                     row.addEventListener("click", async e => {
-                        if(!confirm(`Are you sure you want to delete row ${row.course_name}.`)) return;
+                        if(!confirm(`Are you sure you want to delete row ${row.id}: ${row.course_name}.`)) return;
                         const jsonReq = {};
                         jsonReq.id = row.id;
+                        jsonReq.course_name = row.course_name;
                         let result = await fetch('https://schedule-listings.herokuapp.com/classInfo', {method: "DELETE", headers: {"content-type": "application/json"}, body: JSON.stringify(jsonReq) })
                         result  = await result.json();
                         location.reload();
