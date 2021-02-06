@@ -136,9 +136,9 @@
                             let time = parseInt(classInfo[j].substring(0,2));
                             if(time==0){
                                 time = 12;
-                            }else(time==12){
+                            }else if(time==12){
                                 dayNight = " PM";
-                            }else(time>12){
+                            }else if(time>12){
                                 time-=12;
                                 dayNight = " PM";
                             }
