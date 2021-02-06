@@ -125,28 +125,37 @@
         readInfo();
         async function readInfo(){
             try{
+                // fetch from the classInfo, contain the JSON data
                 const res = await fetch('https://schedule-listings.herokuapp.com/classInfo', {method:'GET'});
+                // loads the JSON data
                 const classes = await res.json();
                 let table = document.getElementById('myTable');
                 let x = 1;
+                // for JSON object of the array parse it and append it to the table
                 classes.forEach(i=>{
                     const classInfo = [i.id, i.course_name, i.professor, i.days, i.time, i.duration, i.student_cap, i.isgrad];
                     let row = table.insertRow(x);
+                    // create table row
                     row.innerHTML="";
+                    // set text content to event other to create the async event to delete the item from the DB
                     row.textContent = i.textContent;
                     row.id = i.id;
                     row.course_name = i.course_name;
+                    // when the row is clicked create a confirm pop-up, create row
                     row.addEventListener("click", async e => {
                         if(!confirm(`Are you sure you want to delete row ${row.id}: ${row.course_name}.`)) return;
                         const jsonReq = {};
                         jsonReq.id = row.id;
                         let result = await fetch('https://schedule-listings.herokuapp.com/classInfo', {method: "DELETE", headers: {"content-type": "application/json"}, body: JSON.stringify(jsonReq) })
                         result  = await result.json();
+                        // refreshes the webpage and shows the data with the deleted row
                         location.reload();
                     })
+                    // For parsing the information
                     for(let j = 0; j<classInfo.length;j++){
                         let dayNight = "AM";
                         let cell = row.insertCell(j);
+                        // for the time data type
                         if(j==4){
                             let time = parseInt(classInfo[j].substring(0,2));
                             if(time==0){
@@ -157,12 +166,15 @@
                                 time-=12;
                                 dayNight = "PM";
                             }
+                            // function used to get the time it lasts until
                             const till = addTime(time,parseInt(classInfo[j].substring(3,5)), parseInt(classInfo[5]),dayNight);
                             cell.innerHTML = `${time}${classInfo[j].substring(2,5)} ${dayNight} - ${till}`;
                         }else{
                             cell.innerHTML = classInfo[j];
                         }
+                        // for duration of the class
                         if(j==5) cell.innerHTML+=' minutes';
+                        // for student cap.
                         else if(j==6) cell.innerHTML+=' students';
                     }
                     x++;
@@ -178,26 +190,40 @@
                 let class_day = "";
                 let empty = false;
                 let info = [];
+                // checks if all input are valid and there are no empty inputs
                 for (let i = 0; i < data.length-4; i++) {
                     if(data[i].value.trim()==="") empty = true;
                     info[i] = data[i].value.trim();
                 }
+                // if async is selected, it will override any other days on the list
                 if(days[0].selected)
                     class_day = days[0].value;
                 else
+                // if not async every day will be appended
                     for(let i = 1; i < days.length;i++){
                         if(days[i].selected) class_day += days[i].value;
                     }
+                // set the last item in the array to be the days of the week
                 info[info.length] = class_day;
+                // if no dates are selected
                 if(class_day=="") empty = true;
+                // this is for the radio type
                 for (let i = 0; i < data.length-1; i++) 
                     if(data[i].checked) info[info.length] = data[i].value;
+                /*
+                empty checks for a empty input
+                info.length checks if radio type is selected
+                parseInt(info[3]) sets the duration of the class to be 300 minutes or 5 hours max
+                parseInt(info[4]) sets the student cap to be 150
+                */
                 if(empty || info.length<7 || parseInt(info[3])>300 || parseInt(info[4])>150) return;
                 else{
+                    // send the request
                     const jsonReq = {};
                     jsonReq.classInfo = info;
                     const res = await fetch('https://schedule-listings.herokuapp.com/classInfo', {method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify(jsonReq)});
                     const processing = await res.json();
+                    // reloads the page
                     location.reload();
                 }
             }catch(e){
@@ -206,8 +232,10 @@
             
         }
         function addTime(hour,minutes,duration,dayNight) {
+            // hour minute and duration has all already been parsed into a integer datatype
             minutes+=duration;
-            if(hour==12)
+            if(hour==12 && minutes>=60)
+                // ternry to check if it's already at 12 AM/PM and needs to move to 1 without changing the AM/PM
                 dayNight = (dayNight=="AM") ? "PM" : "AM";
             if(minutes>=60){
                 hour+=Math.floor(minutes/60);

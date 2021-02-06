@@ -43,7 +43,7 @@
 
 </head>
 <body>
-    <div class="container" method="POST">
+    <div class="container">
         <h1>Schedule</h1>
         <div class="flex">
             <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">
@@ -120,11 +120,13 @@
         
         
     <script>
+        // enables tooltips
         $(function () {
             $('[data-toggle="tooltip"]').tooltip();
-        })
+        });
+        // same thing as index.html but since this is a ORDER BY query it will start with success. 
         let sort = false;
-        readInfo(sort);
+        readInfo();
         async function readInfo(){
             try{
                 const res = await fetch('https://schedule-listings.herokuapp.com/sortedInfo', {method:'GET'});
