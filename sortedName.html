@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-    
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <style>
         tr :first-child{
             text-align:right;
@@ -33,14 +33,29 @@
             margin-right:5%;
             margin-bottom: 2vh;
         }
+        .flex{
+            display: flex;
+        }
+        .btn{
+            margin-right:2vw;
+        }
     </style>
 
 </head>
 <body>
     <div class="container" method="POST">
         <h1>Schedule</h1>
-        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Add a class</button>
-        <button type="button" class="btn btn-info btn-lg" id="sortbyID">Sort by Index Number</button>
+        <div class="flex">
+            <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">
+                <i class="fa fa-plus"></i> Class</button>
+            <div class="dropdown">
+                <button type="button" class="btn btn-info btn-lg" id="sortbyName" data-toggle="dropdown">Sort by <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li><a href="../" >Index ID</a></li>
+                    <li class = "disabled"><a>Class Name</a></li>
+                </ul>
+            </div>
+        </div>
         <div class="modal fade" id="myModal" role="dialog">
           <div class="modal-dialog">
             <div class="modal-content">
@@ -108,9 +123,6 @@
         $(function () {
             $('[data-toggle="tooltip"]').tooltip();
         })
-        document.getElementById("sortbyID").addEventListener("click", async e => {
-            location.replace("../")
-        });
         let sort = false;
         readInfo(sort);
         async function readInfo(){

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Schedule Listings</title>
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
@@ -32,14 +33,30 @@
             margin-right:5%;
             margin-bottom: 2vh;
         }
+        .flex{
+            display: flex;
+        }
+        .btn{
+            margin-right:2vw;
+        }
     </style>
 
 </head>
 <body>
-    <div class="container" method="POST">
+    
+    <div class="container">
         <h1>Schedule</h1>
-        <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Add a class</button>
-        <button type="button" class="btn btn-info btn-lg" id="sortbyName">Sort by class name</button>
+        <div class="flex">
+            <button button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">
+                <i class="fa fa-plus"></i> Class</button>
+            <div class="dropdown">
+                <button type="button" class="btn btn-info btn-lg" id="sortbyName" data-toggle="dropdown">Sort by <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li class = "disabled"><a>Index ID</a></li>
+                    <li><a href="sortedClassName">Class Name</a></li>
+                </ul>
+            </div>
+        </div>
         <div class="modal fade" id="myModal" role="dialog">
           <div class="modal-dialog">
             <div class="modal-content">
@@ -108,9 +125,6 @@
             $('[data-toggle="tooltip"]').tooltip();
         })
         readInfo();
-        document.getElementById("sortbyName").addEventListener("click", async e => {
-            location.replace("sortedClassName");
-        });
         async function readInfo(){
             try{
                 const res = await fetch('https://schedule-listings.herokuapp.com/classInfo', {method:'GET'});
