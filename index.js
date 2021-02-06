@@ -11,9 +11,15 @@ const pool = new Pool({
     ssl: {
       rejectUnauthorized: false
     }
-  });
+    // "host": 'localhost',
+    // "port": 5432,
+    // "user": 'postgres',
+    // "password": 'postgre123',
+    // "database": 'Schedule'
+});
 app.listen(port, ()=> console.log(`Server started on port ${port}`));
 app.get('/', (req, res) => res.sendFile(`${__dirname}/index.html`));
+app.get('/sortedIndex', (req, res) => res.sendFile(`${__dirname}/sortedIndex.html`));
 app.get('/classInfo', async (req, res) => {
     const info = await readInfo();
     res.setHeader('content-type','application/json');
@@ -46,7 +52,20 @@ app.delete("/classInfo", async (req, res) => {
         res.setHeader('content-type','application/json');
         res.send(JSON.stringify(result));
     }
-   
+})
+app.get("/sortedInfo", async (req, res) => {
+    let result = {}
+    try{
+        const reqJson = req.body;
+        result.success = await sortInfo(reqJson.id)
+    }
+    catch(e){
+        result.success=false;
+    }
+    finally{
+        res.setHeader('content-type','application/json');
+        res.send(JSON.stringify(result));
+    }
 })
 start();
 async function start(){
@@ -62,6 +81,14 @@ async function connect(){
 async function readInfo(){
     try{
         const res = await pool.query('SELECT * FROM classlist;');
+        return res.rows;
+    }catch(e){
+        return[];
+    }
+}
+async function sortInfo(){
+    try{
+        const res = await pool.query('SELECT * FROM classlist ORDER BY course_name');
         return res.rows;
     }catch(e){
         return[];

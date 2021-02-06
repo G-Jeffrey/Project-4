@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Schedule Listings</title>
+    <title>Sorted Schedule Listings</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
@@ -40,7 +40,7 @@
     <div class="container" method="POST">
         <h1>Schedule</h1>
         <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Add a class</button>
-        <button type="button" class="btn btn-info btn-lg" id="sortbyName">Sort by class name</button>
+        <button type="button" class="btn btn-info btn-lg" id="sortbyID">Sort by Index Number</button>
         <div class="modal fade" id="myModal" role="dialog">
           <div class="modal-dialog">
             <div class="modal-content">
@@ -108,15 +108,17 @@
         $(function () {
             $('[data-toggle="tooltip"]').tooltip();
         })
-        readInfo();
-        document.getElementById("sortbyName").addEventListener("click", async e => {
-            location.replace("sortedIndex")
+        document.getElementById("sortbyID").addEventListener("click", async e => {
+            location.replace("../")
         });
+        let sort = false;
+        readInfo(sort);
         async function readInfo(){
             try{
-                const res = await fetch('https://schedule-listings.herokuapp.com/classInfo', {method:'GET'});
-                const classes = await res.json();
-                
+                const res = await fetch('https://schedule-listings.herokuapp.com/sortedInfo', {method:'GET'});
+                let classes = await res.json();
+
+                classes = classes["success"];
                 let table = document.getElementById('myTable');
                 let x = 1;
                 classes.forEach(i=>{
