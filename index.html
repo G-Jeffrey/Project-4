@@ -114,7 +114,7 @@
                 const res = await fetch('https://schedule-listings.herokuapp.com/classInfo', {method:'GET'});
                 const classes = await res.json();
                 let table = document.getElementById('myTable');
-                let x = 1, dayNight = " AM";
+                let x = 1;
                 classes.forEach(i=>{
                     
                     const classInfo = [i.id, i.course_name, i.professor, i.days, i.time, i.duration, i.student_cap, i.isgrad];
@@ -131,6 +131,7 @@
                         location.reload();
                     })
                     for(let j = 0; j<classInfo.length;j++){
+                        let dayNight = " AM";
                         let cell = row.insertCell(j);
                         if(j==4){
                             let time = parseInt(classInfo[j].substring(0,2));
