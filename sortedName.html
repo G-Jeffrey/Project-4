@@ -161,7 +161,8 @@
                                 time-=12;
                                 dayNight = " PM";
                             }
-                            cell.innerHTML = time+classInfo[j].substring(2,5)+dayNight;
+                            const till = addTime(time,parseInt(classInfo[j].substring(3,5)), parseInt(classInfo[5]),dayNight);
+                            cell.innerHTML = `${time}${classInfo[j].substring(2,5)} ${dayNight} - ${till}`;
                         }else{
                             cell.innerHTML = classInfo[j];
                         }
@@ -175,7 +176,6 @@
             }
         }
         async function add(){
-            // event.preventDefault();
             try{
                 const data = document.getElementsByTagName('input');
                 const days = document.getElementById('days');
@@ -208,6 +208,22 @@
                 console.log(`Error adding: ${e}`);
             }
             
+        }
+        function addTime(hour,minutes,duration,dayNight) {
+            minutes+=duration;
+            if(hour==12)
+                dayNight = (dayNight=="AM") ? "PM" : "AM";
+            if(minutes>=60){
+                hour+=Math.floor(minutes/60);
+                minutes%=60;
+                if(minutes===0) minutes="00";
+                if(hour>=12){
+                    hour-=12;
+                    if(hour===0) hour="12";
+                    dayNight = (dayNight=="AM") ? "PM" : "AM";
+                }
+            }
+            return `${hour}:${minutes} ${dayNight}`;
         }
     </script>
 
